@@ -92,6 +92,7 @@ Specify the account password.
 EOF
   type        = string
   default     = null
+  sensitive   = true
   validation {
     condition     = var.password == null || can(regex("^[A-Za-z0-9\\!#\\$%\\^&\\*\\(\\)_\\+\\-=]{16,32}", var.password))
     error_message = "Invalid password"
