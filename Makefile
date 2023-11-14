@@ -18,14 +18,14 @@ help:
 	# Usage:
 	#
 	#   * [dev] `make generate`, generate README file.
-	#           - `make generate examples/hello-world` only generate README file under examples/hello-world directory.
+	#           - `make generate examples/standalone` only generate README file under examples/standalone directory.
 	#
 	#   * [dev] `make lint`, check style and security.
 	#           - `LINT_DIRTY=true make lint` verify whether the code tree is dirty.
-	#           - `make lint examples/hello-world` only verify the code under examples/hello-world directory.
+	#           - `make lint examples/standalone` only verify the code under examples/standalone directory.
 	#
 	#   * [dev] `make test`, execute unit testing.
-	#           - `make test example/hello-world` only test the code under examples/hello-world directory.
+	#           - `make test example/standalone` only test the code under examples/standalone directory.
 	#
 	#   * [ci]  `make ci`, execute `make generate`, `make lint` and `make test`.
 	#
