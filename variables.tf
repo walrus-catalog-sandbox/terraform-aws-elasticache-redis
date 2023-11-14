@@ -77,7 +77,7 @@ EOF
 
 variable "engine_parameters" {
   description = <<-EOF
-Specify the deployment parameters.
+Specify the deployment parameters, see https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/ParameterGroups.Redis.html.
 EOF
   type = list(object({
     name  = string
