@@ -21,4 +21,5 @@ output "endpoint_internal_readonly" {
 output "password" {
   value       = local.password
   description = "The password of redis service."
+  sensitive   = true
 }
