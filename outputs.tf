@@ -10,12 +10,12 @@ output "selector" {
 
 output "endpoint_internal" {
   description = "The internal endpoints, a string list, which are used for internal access."
-  value       = [format("%s.%s", aws_service_discovery_service.primary.name, var.infrastructure.domain_suffix)]
+  value       = [format("%s.%s:6379", aws_service_discovery_service.primary.name, var.infrastructure.domain_suffix)]
 }
 
 output "endpoint_internal_readonly" {
   description = "The internal readonly endpoints, a string list, which are used for internal readonly access."
-  value       = var.architecture == "replication" ? [format("%s.%s", aws_service_discovery_service.reader[0].name, var.infrastructure.domain_suffix)] : []
+  value       = var.architecture == "replication" ? [format("%s.%s:6379", aws_service_discovery_service.reader[0].name, var.infrastructure.domain_suffix)] : []
 }
 
 output "password" {
