@@ -48,15 +48,22 @@ data "aws_subnets" "selected" {
   }
 }
 
-data "aws_service_discovery_dns_namespace" "selected" {
-  name = var.infrastructure.domain_suffix
-  type = "DNS_PRIVATE"
-}
-
 data "aws_kms_key" "selected" {
   count = var.infrastructure.kms_key_id != null ? 1 : 0
 
   key_id = var.infrastructure.kms_key_id
+
+  lifecycle {
+    postcondition {
+      condition     = self.enabled
+      error_message = "KMS key needs to be enabled"
+    }
+  }
+}
+
+data "aws_service_discovery_dns_namespace" "selected" {
+  name = var.infrastructure.domain_suffix
+  type = "DNS_PRIVATE"
 }
 
 #
