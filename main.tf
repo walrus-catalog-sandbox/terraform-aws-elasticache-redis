@@ -170,7 +170,7 @@ resource "aws_elasticache_replication_group" "default" {
   subnet_group_name          = aws_elasticache_subnet_group.target.name
   security_group_ids         = [aws_security_group.target.id]
 
-  num_cache_clusters = var.architecture == "replication" ? 2 : 1
+  num_cache_clusters = var.architecture == "replication" ? coalesce(var.replication_readonly_replicas, 1) + 1 : 1
 
   engine_version       = local.version
   parameter_group_name = aws_elasticache_parameter_group.target.name
