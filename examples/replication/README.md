@@ -7,7 +7,6 @@ Deploy Redis service in replication architecture by root module.
 $ terraform apply -auto-approve \
   -target=aws_vpc.example \
   -target=aws_subnet.example \
-  -target=aws_kms_key.example \
   -target=aws_service_discovery_private_dns_namespace.example
 
 # create service
@@ -39,7 +38,6 @@ $ terraform apply -auto-approve
 
 | Name | Type |
 |------|------|
-| [aws_kms_key.example](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [aws_service_discovery_private_dns_namespace.example](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/service_discovery_private_dns_namespace) | resource |
 | [aws_subnet.example](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
 | [aws_vpc.example](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
