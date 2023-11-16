@@ -89,7 +89,6 @@ resource "random_string" "name_suffix" {
   upper   = false
 }
 
-
 locals {
   name     = join("-", [local.resource_name, random_string.name_suffix.result])
   fullname = join("-", [local.namespace, local.name])
@@ -127,7 +126,6 @@ resource "aws_security_group_rule" "target" {
   to_port     = 6379
   description = "Access Redis from VPC"
 }
-
 
 resource "aws_elasticache_subnet_group" "target" {
   name        = local.fullname
@@ -227,7 +225,6 @@ resource "aws_service_discovery_service" "reader" {
     }
   }
 }
-
 
 resource "aws_service_discovery_instance" "reader" {
   count = var.architecture == "replication" ? 1 : 0
