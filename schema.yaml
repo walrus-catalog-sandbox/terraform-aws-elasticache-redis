@@ -30,9 +30,13 @@ components:
           default: {}
           additionalProperties:
             type: object
+            x-walrus-ui:
+              colSpan: 12
           x-walrus-ui:
+            colSpan: 12
             group: Basic
             hidden: true
+            order: 1
         infrastructure:
           title: Infrastructure
           type: object
@@ -60,7 +64,9 @@ components:
               title: Vpc Id
               type: string
           x-walrus-ui:
+            colSpan: 12
             group: Basic
+            order: 2
         architecture:
           title: Architecture
           type: string
@@ -72,6 +78,7 @@ components:
           - replication
           x-walrus-ui:
             group: Basic
+            order: 3
         replication_readonly_replicas:
           title: Replication Readonly Replicas
           type: number
@@ -84,6 +91,7 @@ components:
           - 5
           x-walrus-ui:
             group: Basic
+            order: 4
             showIf: architecture=replication
         engine_version:
           title: Engine Version
@@ -93,9 +101,10 @@ components:
           default: "7.0"
           enum:
           - "7.0"
-          - 6.x
+          - "6.x"
           x-walrus-ui:
             group: Basic
+            order: 5
         engine_parameters:
           title: Engine Parameters
           type: array
@@ -114,16 +123,22 @@ components:
             - name
             - value
             type: object
+            x-walrus-ui:
+              colSpan: 12
           x-walrus-ui:
+            colSpan: 12
             group: Basic
+            order: 6
         password:
           title: Password
           type: string
           description: |
             Specify the account password.
+          format: password
           writeOnly: true
           x-walrus-ui:
             group: Basic
+            order: 7
         resources:
           title: Resources
           type: object
@@ -132,16 +147,16 @@ components:
             Examples:
             ```
             resources:
-              nodeType: string, optional      # https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html
+              node_type: string, optional      # https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html
             ```
+          default:
+            node_type: cache.t2.micro
           properties:
             node_type:
               default: cache.t2.micro
               title: Node Type
               type: string
-            nodeType:
-              default: cache.t2.micro
-              title: Nodetype
-              type: string
           x-walrus-ui:
+            colSpan: 12
             group: Basic
+            order: 8
