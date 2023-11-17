@@ -129,6 +129,7 @@ components:
             colSpan: 12
             group: Basic
             order: 6
+            hidden: true
         password:
           title: Password
           type: string
