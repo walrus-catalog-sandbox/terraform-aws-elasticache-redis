@@ -81,7 +81,7 @@ No modules.
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | Specify the deployment engine version. | `string` | `"7.0"` | no |
 | <a name="input_engine_parameters"></a> [engine\_parameters](#input\_engine\_parameters) | Specify the deployment parameters, see https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/ParameterGroups.Redis.html. | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `[]` | no |
 | <a name="input_password"></a> [password](#input\_password) | Specify the account password. | `string` | `null` | no |
-| <a name="input_resources"></a> [resources](#input\_resources) | Specify the computing resources.<br>Examples:<pre>resources:<br>  node_type: string, optional      # https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html</pre> | <pre>object({<br>    node_type = optional(string, "cache.t2.micro")<br>  })</pre> | <pre>{<br>  "node_type": "cache.t2.micro"<br>}</pre> | no |
+| <a name="input_resources"></a> [resources](#input\_resources) | Specify the computing resources.<br>Examples:<pre>resources:<br>  class: string, optional      # https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html</pre> | <pre>object({<br>    class = optional(string, "cache.t2.micro")<br>  })</pre> | <pre>{<br>  "class": "cache.t2.micro"<br>}</pre> | no |
 
 ## Outputs
 

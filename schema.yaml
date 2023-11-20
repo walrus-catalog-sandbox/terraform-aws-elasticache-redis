@@ -145,7 +145,7 @@ components:
           title: Password
           type: string
           description: |
-            Specify the account password.
+            Specify the account password. If not specified, it will generate a random password.
           format: password
           writeOnly: true
           x-walrus-ui:
@@ -159,17 +159,17 @@ components:
             Examples:
             ```
             resources:
-              node_type: string, optional      # https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html
+              class: string, optional      # https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html
             ```
           default:
-            node_type: cache.t2.micro
+            class: cache.t2.micro
           properties:
-            node_type:
+            class:
               default: cache.t2.micro
-              title: Node Type
+              title: Class
               type: string
               description: |
-                Specify the node type of the redis service. See https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html.
+                Specify the class (node type) of the redis service. See https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html.
           x-walrus-ui:
             colSpan: 12
             group: Basic

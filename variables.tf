@@ -117,13 +117,13 @@ Specify the computing resources.
 Examples:
 ```
 resources:
-  node_type: string, optional      # https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html
+  class: string, optional      # https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html
 ```
 EOF
   type = object({
-    node_type = optional(string, "cache.t2.micro")
+    class = optional(string, "cache.t2.micro")
   })
   default = {
-    node_type = "cache.t2.micro"
+    class = "cache.t2.micro"
   }
 }

@@ -177,7 +177,7 @@ resource "aws_elasticache_replication_group" "default" {
   auth_token           = local.password
   port                 = 6379
 
-  node_type                  = try(var.resources.node_type, "cache.t2.micro")
+  node_type                  = try(var.resources.class, "cache.t2.micro")
   transit_encryption_enabled = true
   at_rest_encryption_enabled = try(data.aws_kms_key.selected[0].arn != null, true)
   kms_key_id                 = try(data.aws_kms_key.selected[0].arn, null)
