@@ -64,14 +64,14 @@ components:
               title: Kms Key Id
               type: string
               description: |
-                Specify the KMS key ID which to encrypt the redis data. If not specified, the redis data will not be encrypted.
+                Specify the KMS key ID which to encrypt the Redis data. If not specified, the Redis data will not be encrypted.
               x-walrus-ui:
                 order: 2
             vpc_id:
               title: Vpc Id
               type: string
               description: |
-                Specify the VPC ID where the redis service applies. 
+                Specify the VPC ID where the Redis service applies. 
               x-walrus-ui:
                 order: 1
           x-walrus-ui:
@@ -169,7 +169,7 @@ components:
               title: Class
               type: string
               description: |
-                Specify the class (node type) of the redis service. See https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html.
+                Specify the computing resources. See https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html.
           x-walrus-ui:
             colSpan: 12
             group: Basic
