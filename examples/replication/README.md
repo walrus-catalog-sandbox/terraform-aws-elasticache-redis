@@ -6,8 +6,7 @@ Deploy Redis service in replication architecture by root module.
 # setup infra
 $ terraform apply -auto-approve \
   -target=aws_vpc.example \
-  -target=aws_subnet.example \
-  -target=aws_service_discovery_private_dns_namespace.example
+  -target=aws_subnet.example
 
 # create service
 $ terraform apply -auto-approve
