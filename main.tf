@@ -7,6 +7,7 @@ locals {
   resource_id      = coalesce(try(var.context["resource"]["id"], null), "example_id")
 
   namespace = join("-", [local.project_name, local.environment_name])
+
   tags = {
     "walrus.seal.io/project-id"       = local.project_id
     "walrus.seal.io/environment-id"   = local.environment_id
@@ -15,6 +16,8 @@ locals {
     "walrus.seal.io/environment-name" = local.environment_name
     "walrus.seal.io/resource-name"    = local.resource_name
   }
+
+  architecture = coalesce(var.architecture, "standalone")
 }
 
 #
@@ -42,7 +45,7 @@ data "aws_subnets" "selected" {
 
   lifecycle {
     postcondition {
-      condition     = var.architecture == "replication" ? length(self.ids) > 1 : length(self.ids) > 0
+      condition     = local.architecture == "replication" ? length(self.ids) > 1 : length(self.ids) > 0
       error_message = "Replication mode needs multiple subnets"
     }
   }
@@ -165,12 +168,12 @@ resource "aws_elasticache_replication_group" "default" {
   replication_group_id       = local.fullname
   description                = "Elasticache replication group for ${local.fullname}"
   tags                       = local.tags
-  multi_az_enabled           = var.architecture == "replication"
-  automatic_failover_enabled = var.architecture == "replication"
+  multi_az_enabled           = local.architecture == "replication"
+  automatic_failover_enabled = local.architecture == "replication"
   subnet_group_name          = aws_elasticache_subnet_group.target.name
   security_group_ids         = [aws_security_group.target.id]
 
-  num_cache_clusters = var.architecture == "replication" ? coalesce(var.replication_readonly_replicas, 1) + 1 : 1
+  num_cache_clusters = local.architecture == "replication" ? coalesce(var.replication_readonly_replicas, 1) + 1 : 1
 
   engine_version       = local.version
   parameter_group_name = aws_elasticache_parameter_group.target.name
@@ -190,7 +193,7 @@ resource "aws_elasticache_replication_group" "default" {
 resource "aws_service_discovery_service" "primary" {
   count = var.infrastructure.domain_suffix != null ? 1 : 0
 
-  name = format("%s.%s", (var.architecture == "replication" ? join("-", [
+  name = format("%s.%s", (local.architecture == "replication" ? join("-", [
     local.name, "primary"
   ]) : local.name), local.namespace)
   force_destroy = true
@@ -217,7 +220,7 @@ resource "aws_service_discovery_instance" "primary" {
 }
 
 resource "aws_service_discovery_service" "reader" {
-  count = var.infrastructure.domain_suffix != null && var.architecture == "replication" ? 1 : 0
+  count = var.infrastructure.domain_suffix != null && local.architecture == "replication" ? 1 : 0
 
   name          = format("%s.%s", join("-", [local.name, "reader"]), local.namespace)
   force_destroy = true
@@ -233,7 +236,7 @@ resource "aws_service_discovery_service" "reader" {
 }
 
 resource "aws_service_discovery_instance" "reader" {
-  count = var.infrastructure.domain_suffix != null && var.architecture == "replication" ? 1 : 0
+  count = var.infrastructure.domain_suffix != null && local.architecture == "replication" ? 1 : 0
 
   instance_id = aws_elasticache_replication_group.default.id
   service_id  = aws_service_discovery_service.reader[0].id
