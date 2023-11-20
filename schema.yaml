@@ -46,27 +46,32 @@ components:
             Examples:
             ```
             infrastructure:
-              vpc_id: string                  # the ID of the VPC where the redis service applies
-              kms_key_id: sting,optional      # the ID of the KMS key which to encrypt the redis data
-              domain_suffix: string           # a private DNS namespace of the CloudMap where to register the applied redis service
+              vpc_id: string                            # the ID of the VPC where the redis service applies
+              kms_key_id: string, optional              # the ID of the KMS key which to encrypt the redis data
+              domain_suffix: string, optional           # a private DNS namespace of the CloudMap where to register the applied redis service
             ```
           required:
-          - domain_suffix
           - vpc_id
           properties:
             domain_suffix:
               title: Domain Suffix
               type: string
+              description: |
+                Specify the domain suffix of the CloudMap. The domain suffix must be a valid DNS name.
               x-walrus-ui:
                 order: 3
             kms_key_id:
               title: Kms Key Id
               type: string
+              description: |
+                Specify the KMS key ID which to encrypt the redis data. If not specified, the redis data will not be encrypted.
               x-walrus-ui:
                 order: 2
             vpc_id:
               title: Vpc Id
               type: string
+              description: |
+                Specify the VPC ID where the redis service applies. 
               x-walrus-ui:
                 order: 1
           x-walrus-ui:
@@ -163,6 +168,8 @@ components:
               default: cache.t2.micro
               title: Node Type
               type: string
+              description: |
+                Specify the node type of the redis service. See https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html.
           x-walrus-ui:
             colSpan: 12
             group: Basic

@@ -35,15 +35,15 @@ Specify the infrastructure information for deploying.
 Examples:
 ```
 infrastructure:
-  vpc_id: string                  # the ID of the VPC where the redis service applies
-  kms_key_id: sting,optional      # the ID of the KMS key which to encrypt the redis data
-  domain_suffix: string           # a private DNS namespace of the CloudMap where to register the applied redis service
+  vpc_id: string                            # the ID of the VPC where the redis service applies
+  kms_key_id: string, optional              # the ID of the KMS key which to encrypt the redis data
+  domain_suffix: string, optional           # a private DNS namespace of the CloudMap where to register the applied redis service
 ```
 EOF
   type = object({
     vpc_id        = string
     kms_key_id    = optional(string)
-    domain_suffix = string
+    domain_suffix = optional(string)
   })
 }
 

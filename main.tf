@@ -62,6 +62,8 @@ data "aws_kms_key" "selected" {
 }
 
 data "aws_service_discovery_dns_namespace" "selected" {
+  count = var.infrastructure.domain_suffix != null ? 1 : 0
+
   name = var.infrastructure.domain_suffix
   type = "DNS_PRIVATE"
 }
@@ -186,13 +188,15 @@ resource "aws_elasticache_replication_group" "default" {
 }
 
 resource "aws_service_discovery_service" "primary" {
+  count = var.infrastructure.domain_suffix != null ? 1 : 0
+
   name = format("%s.%s", (var.architecture == "replication" ? join("-", [
     local.name, "primary"
   ]) : local.name), local.namespace)
   force_destroy = true
 
   dns_config {
-    namespace_id   = data.aws_service_discovery_dns_namespace.selected.id
+    namespace_id   = data.aws_service_discovery_dns_namespace.selected[0].id
     routing_policy = "WEIGHTED"
     dns_records {
       ttl  = 30
@@ -202,8 +206,10 @@ resource "aws_service_discovery_service" "primary" {
 }
 
 resource "aws_service_discovery_instance" "primary" {
+  count = var.infrastructure.domain_suffix != null ? 1 : 0
+
   instance_id = aws_elasticache_replication_group.default.id
-  service_id  = aws_service_discovery_service.primary.id
+  service_id  = aws_service_discovery_service.primary[0].id
 
   attributes = {
     AWS_INSTANCE_CNAME = aws_elasticache_replication_group.default.primary_endpoint_address
@@ -211,13 +217,13 @@ resource "aws_service_discovery_instance" "primary" {
 }
 
 resource "aws_service_discovery_service" "reader" {
-  count = var.architecture == "replication" ? 1 : 0
+  count = var.infrastructure.domain_suffix != null && var.architecture == "replication" ? 1 : 0
 
   name          = format("%s.%s", join("-", [local.name, "reader"]), local.namespace)
   force_destroy = true
 
   dns_config {
-    namespace_id   = data.aws_service_discovery_dns_namespace.selected.id
+    namespace_id   = data.aws_service_discovery_dns_namespace.selected[0].id
     routing_policy = "WEIGHTED"
     dns_records {
       ttl  = 30
@@ -227,7 +233,7 @@ resource "aws_service_discovery_service" "reader" {
 }
 
 resource "aws_service_discovery_instance" "reader" {
-  count = var.architecture == "replication" ? 1 : 0
+  count = var.infrastructure.domain_suffix != null && var.architecture == "replication" ? 1 : 0
 
   instance_id = aws_elasticache_replication_group.default.id
   service_id  = aws_service_discovery_service.reader[0].id
