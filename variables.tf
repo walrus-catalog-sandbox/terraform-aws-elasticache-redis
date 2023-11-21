@@ -122,9 +122,9 @@ resources:
 ```
 EOF
   type = object({
-    class = optional(string, "cache.t4g.micro")
+    class = optional(string, "cache.t3.micro")
   })
   default = {
-    class = "cache.t4g.micro"
+    class = "cache.t3.micro"
   }
 }
