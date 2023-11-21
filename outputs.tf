@@ -12,12 +12,12 @@ locals {
     format("%s.%s", aws_service_discovery_service.reader[0].name, var.infrastructure.domain_suffix)
   ] : []
 
-  endpoints = flatten([
+  endpoints = [
     for c in local.hosts : format("%s:%d", c, local.port)
-  ])
-  endpoints_readonly = flatten([
+  ]
+  endpoints_readonly = [
     for c in(local.hosts_readonly != null ? local.hosts_readonly : []) : format("%s:%d", c, local.port)
-  ])
+  ]
 }
 
 #
