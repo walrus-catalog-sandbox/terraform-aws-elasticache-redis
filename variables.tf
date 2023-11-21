@@ -100,7 +100,8 @@ EOF
 
 variable "password" {
   description = <<-EOF
-Specify the account password.
+Specify the account password. The password must be 16-32 characters long and start with any letter, number, or the following symbols: ! # $ % ^ & * ( ) _ + - =.
+If not specified, it will generate a random password.
 EOF
   type        = string
   default     = null
@@ -121,9 +122,9 @@ resources:
 ```
 EOF
   type = object({
-    class = optional(string, "cache.t2.micro")
+    class = optional(string, "cache.t4g.micro")
   })
   default = {
-    class = "cache.t2.micro"
+    class = "cache.t4g.micro"
   }
 }
