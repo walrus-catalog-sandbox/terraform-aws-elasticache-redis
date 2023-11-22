@@ -92,7 +92,7 @@ No modules.
 | <a name="output_connection"></a> [connection](#output\_connection) | The connection, a string combined host and port, might be a comma separated string or a single string. |
 | <a name="output_connection_readonly"></a> [connection\_readonly](#output\_connection\_readonly) | The readonly connection, a string combined host and port, might be a comma separated string or a single string. |
 | <a name="output_address"></a> [address](#output\_address) | The address, a string only has host, might be a comma separated string or a single string. |
-| <a name="output_address_readonly"></a> [address\_readonly](#output\_address\_readonly) | The readonly host, a string only has host, might be a comma separated string or a single string. |
+| <a name="output_address_readonly"></a> [address\_readonly](#output\_address\_readonly) | The readonly address, a string only has host, might be a comma separated string or a single string. |
 | <a name="output_port"></a> [port](#output\_port) | The port of the service. |
 | <a name="output_password"></a> [password](#output\_password) | The password of the account to access the service. |
 | <a name="output_endpoints"></a> [endpoints](#output\_endpoints) | The endpoints, a list of string combined host and port. |

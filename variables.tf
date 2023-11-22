@@ -82,7 +82,7 @@ EOF
   type        = string
   default     = "7.0"
   validation {
-    condition     = contains(["7.0", "6.x"], var.engine_version)
+    condition     = contains(["7.0", "6.0"], var.engine_version)
     error_message = "Invalid version"
   }
 }

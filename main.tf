@@ -105,7 +105,7 @@ locals {
 #
 
 locals {
-  version = coalesce(var.engine_version, "7.0")
+  version = coalesce(var.engine_version == "6.0" ? "6.x" : var.engine_version, "7.0")
   version_family_mapping = {
     "6.x" = "redis6.x",
     "7.0" = "redis7",
