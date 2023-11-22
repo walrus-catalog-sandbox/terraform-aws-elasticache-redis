@@ -66,7 +66,7 @@ output "address" {
 }
 
 output "address_readonly" {
-  description = "The readonly host, a string only has host, might be a comma separated string or a single string."
+  description = "The readonly address, a string only has host, might be a comma separated string or a single string."
   value       = join(",", local.hosts_readonly)
 }
 
