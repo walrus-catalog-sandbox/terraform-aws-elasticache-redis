@@ -35,11 +35,13 @@ output "refer" {
   value = {
     schema = "aws:elasticache:redis"
     params = {
-      selector       = local.tags
-      hosts          = local.hosts
-      hosts_readonly = local.hosts_readonly
-      port           = local.port
-      password       = nonsensitive(local.password)
+      selector           = local.tags
+      hosts              = local.hosts
+      hosts_readonly     = local.hosts_readonly
+      port               = local.port
+      endpoints          = local.endpoints
+      endpoints_readonly = local.endpoints_readonly
+      password           = nonsensitive(local.password)
     }
   }
 }
@@ -53,19 +55,24 @@ output "connection" {
   value       = join(",", local.endpoints)
 }
 
-output "connection_without_port" {
-  description = "The connection without port, a string combined host, might be a comma separated string or a single string."
-  value       = join(",", local.hosts)
-}
-
 output "connection_readonly" {
   description = "The readonly connection, a string combined host and port, might be a comma separated string or a single string."
   value       = join(",", local.endpoints_readonly)
 }
 
-output "connection_without_port_readonly" {
-  description = "The readonly connection without port, a string combined host, might be a comma separated string or a single string."
+output "address" {
+  description = "The address, a string only has host, might be a comma separated string or a single string."
+  value       = join(",", local.hosts)
+}
+
+output "address_readonly" {
+  description = "The readonly host, a string only has host, might be a comma separated string or a single string."
   value       = join(",", local.hosts_readonly)
+}
+
+output "port" {
+  description = "The port of the service."
+  value       = local.port
 }
 
 output "password" {
