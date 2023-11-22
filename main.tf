@@ -98,6 +98,8 @@ locals {
   name     = join("-", [local.resource_name, random_string.name_suffix.result])
   fullname = join("-", [local.namespace, local.name])
   password = coalesce(var.password, random_password.password.result)
+
+  replication_readonly_replicas = var.replication_readonly_replicas == 0 ? 1 : var.replication_readonly_replicas
 }
 
 #
@@ -173,7 +175,7 @@ resource "aws_elasticache_replication_group" "default" {
   subnet_group_name          = aws_elasticache_subnet_group.target.name
   security_group_ids         = [aws_security_group.target.id]
 
-  num_cache_clusters = local.architecture == "replication" ? coalesce(var.replication_readonly_replicas, 1) + 1 : 1
+  num_cache_clusters = local.architecture == "replication" ? local.replication_readonly_replicas + 1 : 1
 
   engine_version       = local.version
   parameter_group_name = aws_elasticache_parameter_group.target.name
