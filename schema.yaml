@@ -6,6 +6,8 @@ components:
     variables:
       required:
       - infrastructure
+      - architecture
+      - engine_version
       type: object
       properties:
         context:
@@ -14,6 +16,7 @@ components:
           description: |
             Receive contextual information. When Walrus deploys, Walrus will inject specific contextual information into this field.
           default: {}
+          nullable: true
           additionalProperties:
             type: object
             x-walrus-ui:
@@ -36,6 +39,7 @@ components:
               type: string
               description: |
                 Specify the domain suffix of the CloudMap. The domain suffix must be a valid DNS name.
+              nullable: true
               x-walrus-ui:
                 order: 3
             kms_key_id:
@@ -43,6 +47,7 @@ components:
               type: string
               description: |
                 Specify the KMS key ID which to encrypt the Redis data. If not specified, the Redis data will not be encrypted.
+              nullable: true
               x-walrus-ui:
                 order: 2
             vpc_id:
@@ -74,6 +79,7 @@ components:
           description: |
             Specify the number of read-only replicas under the replication deployment.
           default: 1
+          nullable: true
           enum:
           - 1
           - 3
@@ -100,6 +106,7 @@ components:
           description: |
             Specify the deployment parameters, see https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/ParameterGroups.Redis.html.
           default: []
+          nullable: true
           items:
             properties:
               name:
@@ -127,6 +134,7 @@ components:
           description: |
             Specify the account password. If not specified, it will generate a random password. The password must be 16-32 characters long and start with any letter, number, or the following symbols: ! # $ % ^ & * ( ) _ + - =.
             If not specified, it will generate a random password.
+          nullable: true
           format: password
           writeOnly: true
           x-walrus-ui:
@@ -139,13 +147,15 @@ components:
             Specify the computing resources.
           default:
             class: cache.t3.micro
+          nullable: true
           properties:
             class:
-              default: cache.t3.micro
               title: Class
               type: string
               description: |
                 Specify the computing resources. See https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.SupportedTypes.html.
+              default: cache.t3.micro
+              nullable: true
           x-walrus-ui:
             colSpan: 12
             group: Basic
