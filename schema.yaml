@@ -23,7 +23,7 @@ components:
               colSpan: 12
           x-walrus-ui:
             colSpan: 12
-            group: Basic
+            group: Advanced
             hidden: true
             order: 1
         infrastructure:
@@ -59,7 +59,7 @@ components:
                 order: 1
           x-walrus-ui:
             colSpan: 12
-            group: Basic
+            group: Advanced
             order: 2
         architecture:
           title: Architecture
@@ -160,3 +160,7 @@ components:
             colSpan: 12
             group: Basic
             order: 8
+      x-walrus-ui:
+        groupOrder: 
+        - Basic
+        - Advanced
