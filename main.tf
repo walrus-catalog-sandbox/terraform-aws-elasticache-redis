@@ -9,6 +9,8 @@ locals {
   namespace = join("-", [local.project_name, local.environment_name])
 
   tags = {
+    "Name" = join("-", [local.namespace, local.resource_name])
+
     "walrus.seal.io/project-id"       = local.project_id
     "walrus.seal.io/environment-id"   = local.environment_id
     "walrus.seal.io/resource-id"      = local.resource_id
@@ -95,9 +97,10 @@ resource "random_string" "name_suffix" {
 }
 
 locals {
-  name     = join("-", [local.resource_name, random_string.name_suffix.result])
-  fullname = join("-", [local.namespace, local.name])
-  password = coalesce(var.password, random_password.password.result)
+  name        = join("-", [local.resource_name, random_string.name_suffix.result])
+  fullname    = join("-", [local.namespace, local.name])
+  description = "Created by Walrus catalog, and provisioned by Terraform."
+  password    = coalesce(var.password, random_password.password.result)
 
   replication_readonly_replicas = var.replication_readonly_replicas == 0 ? 1 : var.replication_readonly_replicas
 }
@@ -117,13 +120,16 @@ locals {
 # create security group.
 
 resource "aws_security_group" "target" {
-  name = local.fullname
-  tags = local.tags
+  name        = local.fullname
+  description = local.description
+  tags        = local.tags
 
   vpc_id = data.aws_vpc.selected.id
 }
 
 resource "aws_security_group_rule" "target" {
+  description = local.description
+
   security_group_id = aws_security_group.target.id
 
   type        = "ingress"
@@ -131,45 +137,50 @@ resource "aws_security_group_rule" "target" {
   cidr_blocks = [data.aws_vpc.selected.cidr_block]
   from_port   = 6379
   to_port     = 6379
-  description = "Access Redis from VPC"
 }
 
 resource "aws_elasticache_subnet_group" "target" {
   name        = local.fullname
-  description = "Elasticache subnet group for ${local.fullname}"
-  subnet_ids  = data.aws_subnets.selected.ids
+  description = local.description
   tags        = local.tags
+
+  subnet_ids = data.aws_subnets.selected.ids
+}
+
+locals {
+  parameters = merge(
+    {
+      "cluster-enabled" = "no"
+    },
+    {
+      for c in(var.engine_parameters != null ? var.engine_parameters : []) : c.name => c.value
+      if try(c.value != "", false)
+    }
+  )
 }
 
 resource "aws_elasticache_parameter_group" "target" {
   name        = local.fullname
-  description = "Elasticache parameter group for ${local.fullname}"
-  family      = local.version_family_mapping[local.version]
+  description = local.description
+  tags        = local.tags
+
+  family = local.version_family_mapping[local.version]
 
   dynamic "parameter" {
-    for_each = concat([
-      { name = "cluster-enabled", value = "no" }
-    ], var.engine_parameters == null ? [] : var.engine_parameters)
+    for_each = local.parameters
     content {
-      name  = parameter.value.name
-      value = tostring(parameter.value.value)
+      name  = parameter.key
+      value = tostring(parameter.value)
     }
-  }
-
-  tags = local.tags
-
-  # Ignore changes to the description since it will try to recreate the resource
-  lifecycle {
-    ignore_changes = [
-      description,
-    ]
   }
 }
 
 resource "aws_elasticache_replication_group" "default" {
-  replication_group_id       = local.fullname
-  description                = "Elasticache replication group for ${local.fullname}"
-  tags                       = local.tags
+  description = local.description
+  tags        = local.tags
+
+  replication_group_id = local.fullname
+
   multi_az_enabled           = local.architecture == "replication"
   automatic_failover_enabled = local.architecture == "replication"
   subnet_group_name          = aws_elasticache_subnet_group.target.name
@@ -195,10 +206,9 @@ resource "aws_elasticache_replication_group" "default" {
 resource "aws_service_discovery_service" "primary" {
   count = var.infrastructure.domain_suffix != null ? 1 : 0
 
-  name = format("%s.%s", (local.architecture == "replication" ? join("-", [
-    local.name, "primary"
-  ]) : local.name), local.namespace)
-  force_destroy = true
+  name        = format("%s.%s", (local.architecture == "replication" ? join("-", [local.name, "primary"]) : local.name), local.namespace)
+  description = local.description
+  tags        = local.tags
 
   dns_config {
     namespace_id   = data.aws_service_discovery_dns_namespace.selected[0].id
@@ -208,6 +218,8 @@ resource "aws_service_discovery_service" "primary" {
       type = "CNAME"
     }
   }
+
+  force_destroy = true
 }
 
 resource "aws_service_discovery_instance" "primary" {
@@ -224,8 +236,9 @@ resource "aws_service_discovery_instance" "primary" {
 resource "aws_service_discovery_service" "reader" {
   count = var.infrastructure.domain_suffix != null && local.architecture == "replication" ? 1 : 0
 
-  name          = format("%s.%s", join("-", [local.name, "reader"]), local.namespace)
-  force_destroy = true
+  name        = format("%s.%s", join("-", [local.name, "reader"]), local.namespace)
+  description = local.description
+  tags        = local.tags
 
   dns_config {
     namespace_id   = data.aws_service_discovery_dns_namespace.selected[0].id
@@ -235,6 +248,8 @@ resource "aws_service_discovery_service" "reader" {
       type = "CNAME"
     }
   }
+
+  force_destroy = true
 }
 
 resource "aws_service_discovery_instance" "reader" {
