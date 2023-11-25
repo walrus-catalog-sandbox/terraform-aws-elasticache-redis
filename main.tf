@@ -34,7 +34,7 @@ data "aws_vpc" "selected" {
 
   lifecycle {
     postcondition {
-      condition     = try(var.infrastructure.domain_suffix == null, false) || (self.enable_dns_support && self.enable_dns_hostnames)
+      condition     = var.infrastructure.domain_suffix == null || (self.enable_dns_support && self.enable_dns_hostnames)
       error_message = "VPC needs to enable DNS support and DNS hostnames resolution"
     }
   }
@@ -68,7 +68,7 @@ data "aws_kms_key" "selected" {
 }
 
 data "aws_service_discovery_dns_namespace" "selected" {
-  count = try(var.infrastructure.domain_suffix != null, false) ? 1 : 0
+  count = var.infrastructure.domain_suffix != null ? 1 : 0
 
   name = var.infrastructure.domain_suffix
   type = "DNS_PRIVATE"
@@ -127,7 +127,6 @@ locals {
       if try(c.value != "", false)
     }
   )
-  publicly_accessible = try(var.infrastructure.publicly_accessible, false)
 }
 
 resource "aws_elasticache_parameter_group" "target" {
@@ -172,7 +171,7 @@ resource "aws_security_group_rule" "target" {
   security_group_id = aws_security_group.target.id
   type              = "ingress"
   protocol          = "tcp"
-  cidr_blocks       = local.publicly_accessible ? ["0.0.0.0/0", data.aws_vpc.selected.cidr_block] : [data.aws_vpc.selected.cidr_block]
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
   from_port         = 6379
   to_port           = 6379
 }
