@@ -34,8 +34,8 @@ data "aws_vpc" "selected" {
 
   lifecycle {
     postcondition {
-      condition     = self.enable_dns_support
-      error_message = "VPC needs to enable DNS support"
+      condition     = try(var.infrastructure.domain_suffix == null, false) || (self.enable_dns_support && self.enable_dns_hostnames)
+      error_message = "VPC needs to enable DNS support and DNS hostnames resolution"
     }
   }
 }
@@ -68,7 +68,7 @@ data "aws_kms_key" "selected" {
 }
 
 data "aws_service_discovery_dns_namespace" "selected" {
-  count = var.infrastructure.domain_suffix != null ? 1 : 0
+  count = try(var.infrastructure.domain_suffix != null, false) ? 1 : 0
 
   name = var.infrastructure.domain_suffix
   type = "DNS_PRIVATE"
@@ -110,13 +110,50 @@ locals {
 # Deployment
 #
 
+# create parameters group.
+
 locals {
   version = coalesce(var.engine_version == "6.0" ? "6.x" : var.engine_version, "7.0")
   version_family_map = {
     "6.x" = "redis6.x",
     "7.0" = "redis7",
   }
+  parameters = merge(
+    {
+      "cluster-enabled" = "no"
+    },
+    {
+      for c in(var.engine_parameters != null ? var.engine_parameters : []) : c.name => c.value
+      if try(c.value != "", false)
+    }
+  )
   publicly_accessible = try(var.infrastructure.publicly_accessible, false)
+}
+
+resource "aws_elasticache_parameter_group" "target" {
+  name        = local.fullname
+  description = local.description
+  tags        = local.tags
+
+  family = local.version_family_map[local.version]
+
+  dynamic "parameter" {
+    for_each = local.parameters
+    content {
+      name  = parameter.key
+      value = tostring(parameter.value)
+    }
+  }
+}
+
+# create subnet group
+
+resource "aws_elasticache_subnet_group" "target" {
+  name        = local.fullname
+  description = local.description
+  tags        = local.tags
+
+  subnet_ids = data.aws_subnets.selected.ids
 }
 
 # create security group.
@@ -140,41 +177,7 @@ resource "aws_security_group_rule" "target" {
   to_port           = 6379
 }
 
-resource "aws_elasticache_subnet_group" "target" {
-  name        = local.fullname
-  description = local.description
-  tags        = local.tags
-
-  subnet_ids = data.aws_subnets.selected.ids
-}
-
-locals {
-  parameters = merge(
-    {
-      "cluster-enabled" = "no"
-    },
-    {
-      for c in(var.engine_parameters != null ? var.engine_parameters : []) : c.name => c.value
-      if try(c.value != "", false)
-    }
-  )
-}
-
-resource "aws_elasticache_parameter_group" "target" {
-  name        = local.fullname
-  description = local.description
-  tags        = local.tags
-
-  family = local.version_family_map[local.version]
-
-  dynamic "parameter" {
-    for_each = local.parameters
-    content {
-      name  = parameter.key
-      value = tostring(parameter.value)
-    }
-  }
-}
+# create group.
 
 resource "aws_elasticache_replication_group" "default" {
   description = local.description
@@ -204,6 +207,10 @@ resource "aws_elasticache_replication_group" "default" {
   snapshot_window          = "00:00-05:00"
   snapshot_retention_limit = 5
 }
+
+#
+# Exposing
+#
 
 resource "aws_service_discovery_service" "primary" {
   count = var.infrastructure.domain_suffix != null ? 1 : 0
