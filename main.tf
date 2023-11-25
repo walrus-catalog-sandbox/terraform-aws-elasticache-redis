@@ -112,10 +112,11 @@ locals {
 
 locals {
   version = coalesce(var.engine_version == "6.0" ? "6.x" : var.engine_version, "7.0")
-  version_family_mapping = {
+  version_family_map = {
     "6.x" = "redis6.x",
     "7.0" = "redis7",
   }
+  publicly_accessible = try(var.infrastructure.publicly_accessible, false)
 }
 
 # create security group.
@@ -132,12 +133,11 @@ resource "aws_security_group_rule" "target" {
   description = local.description
 
   security_group_id = aws_security_group.target.id
-
-  type        = "ingress"
-  protocol    = "tcp"
-  cidr_blocks = [data.aws_vpc.selected.cidr_block]
-  from_port   = 6379
-  to_port     = 6379
+  type              = "ingress"
+  protocol          = "tcp"
+  cidr_blocks       = local.publicly_accessible ? ["0.0.0.0/0", data.aws_vpc.selected.cidr_block] : [data.aws_vpc.selected.cidr_block]
+  from_port         = 6379
+  to_port           = 6379
 }
 
 resource "aws_elasticache_subnet_group" "target" {
@@ -165,7 +165,7 @@ resource "aws_elasticache_parameter_group" "target" {
   description = local.description
   tags        = local.tags
 
-  family = local.version_family_mapping[local.version]
+  family = local.version_family_map[local.version]
 
   dynamic "parameter" {
     for_each = local.parameters
@@ -189,6 +189,7 @@ resource "aws_elasticache_replication_group" "default" {
 
   num_cache_clusters = local.architecture == "replication" ? local.replication_readonly_replicas + 1 : 1
 
+  engine               = "redis"
   engine_version       = local.version
   parameter_group_name = aws_elasticache_parameter_group.target.name
   auth_token           = local.password
@@ -198,10 +199,10 @@ resource "aws_elasticache_replication_group" "default" {
   transit_encryption_enabled = true
   at_rest_encryption_enabled = try(data.aws_kms_key.selected[0].arn != null, true)
   kms_key_id                 = try(data.aws_kms_key.selected[0].arn, null)
-  snapshot_window            = "00:00-05:00"
-  snapshot_retention_limit   = 5
 
-  apply_immediately = true
+  apply_immediately        = true
+  snapshot_window          = "00:00-05:00"
+  snapshot_retention_limit = 5
 }
 
 resource "aws_service_discovery_service" "primary" {
