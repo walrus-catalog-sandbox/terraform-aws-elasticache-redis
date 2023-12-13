@@ -18,7 +18,9 @@ help:
 	# Usage:
 	#
 	#   * [dev] `make generate`, generate README file.
-	#           - `make generate examples/standalone` only generate README file under examples/standalone directory.
+	#           - `make generate examples/standalone` only generate docs and schema under examples/standalone directory.
+        #           - `make generate docs examples/standalone` only generate README file under examples/standalone directory.
+        #           - `make generate schema examples/standalone` only generate schema.yaml under examples/standalone directory.
 	#
 	#   * [dev] `make lint`, check style and security.
 	#           - `LINT_DIRTY=true make lint` verify whether the code tree is dirty.
@@ -33,4 +35,4 @@ help:
 
 
 .DEFAULT_GOAL := ci
-.PHONY: $(targets) examples $(examples) modules $(modules) tests
+.PHONY: $(targets) examples $(examples) modules $(modules) tests docs schema
