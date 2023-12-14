@@ -18,16 +18,16 @@ help:
 	# Usage:
 	#
 	#   * [dev] `make generate`, generate README file.
-	#           - `make generate examples/standalone` only generate docs and schema under examples/standalone directory.
-        #           - `make generate docs examples/standalone` only generate README file under examples/standalone directory.
-        #           - `make generate schema examples/standalone` only generate schema.yaml under examples/standalone directory.
+	#           - `make generate examples/hello-world` only generate docs and schema under examples/hello-world directory.
+	#           - `make generate docs examples/hello-world` only generate README file under examples/hello-world directory.
+	#           - `make generate schema examples/hello-world` only generate schema.yaml under examples/hello-world directory.
 	#
 	#   * [dev] `make lint`, check style and security.
 	#           - `LINT_DIRTY=true make lint` verify whether the code tree is dirty.
-	#           - `make lint examples/standalone` only verify the code under examples/standalone directory.
+	#           - `make lint examples/hello-world` only verify the code under examples/hello-world directory.
 	#
 	#   * [dev] `make test`, execute unit testing.
-	#           - `make test example/standalone` only test the code under examples/standalone directory.
+	#           - `make test examples/hello-world` only test the code under examples/hello-world directory.
 	#
 	#   * [ci]  `make ci`, execute `make generate`, `make lint` and `make test`.
 	#
