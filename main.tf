@@ -137,7 +137,7 @@ resource "aws_elasticache_parameter_group" "target" {
   family = local.version_family_map[local.version]
 
   dynamic "parameter" {
-    for_each = local.parameters
+    for_each = try(nonsensitive(local.parameters), local.parameters)
     content {
       name  = parameter.key
       value = tostring(parameter.value)
