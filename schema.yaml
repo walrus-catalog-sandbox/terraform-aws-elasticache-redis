@@ -5,16 +5,13 @@ components:
   schemas:
     variables:
       type: object
-      required:
-      - infrastructure
       properties:
         infrastructure:
           title: Infrastructure
           type: object
           description: |
             Specify the infrastructure information for deploying.
-          required:
-          - vpc_id
+          default: {}
           properties:
             domain_suffix:
               description: |
@@ -31,7 +28,8 @@ components:
               x-walrus-ui:
                 order: 2
             vpc_id:
-              description: "Specify the VPC ID where the Redis service applies. \n"
+              description: Specify the VPC ID where the Redis service applies. If
+                not specified, a new VPC will be created.
               title: Vpc Id
               type: string
               x-walrus-ui:
