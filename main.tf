@@ -9,7 +9,7 @@ locals {
   namespace = join("-", [local.project_name, local.environment_name])
 
   tags = {
-    "Name" = join("-", [local.namespace, local.resource_name])
+    "Name" = local.resource_name
 
     "walrus.seal.io/catalog-name"     = "terraform-aws-elasticache-redis"
     "walrus.seal.io/project-id"       = local.project_id
@@ -134,7 +134,6 @@ resource "random_string" "name_suffix" {
 
 locals {
   name        = join("-", [local.resource_name, random_string.name_suffix.result])
-  fullname    = join("-", [local.namespace, local.name])
   description = "Created by Walrus catalog, and provisioned by Terraform."
   password    = coalesce(var.password, random_password.password.result)
 
@@ -165,7 +164,7 @@ locals {
 }
 
 resource "aws_elasticache_parameter_group" "target" {
-  name        = local.fullname
+  name        = local.name
   description = local.description
   tags        = local.tags
 
@@ -183,7 +182,7 @@ resource "aws_elasticache_parameter_group" "target" {
 # create subnet group
 
 resource "aws_elasticache_subnet_group" "target" {
-  name        = local.fullname
+  name        = local.name
   description = local.description
   tags        = local.tags
 
@@ -193,7 +192,7 @@ resource "aws_elasticache_subnet_group" "target" {
 # create security group.
 
 resource "aws_security_group" "target" {
-  name        = local.fullname
+  name        = local.name
   description = local.description
   tags        = local.tags
 
@@ -217,7 +216,7 @@ resource "aws_elasticache_replication_group" "default" {
   description = local.description
   tags        = local.tags
 
-  replication_group_id = local.fullname
+  replication_group_id = local.name
 
   multi_az_enabled           = local.architecture == "replication"
   automatic_failover_enabled = local.architecture == "replication"
